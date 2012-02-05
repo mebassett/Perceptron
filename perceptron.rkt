@@ -22,47 +22,54 @@
 
 ;some maths functions
 (define (sign x)
-    (if (>= x 0)
-        1
-        -1))
+  (if (>= x 0)
+      1
+      -1))
 
 (define (dot v1 v2)
-    (apply + (vector->list (vector-map * v1 v2))))
+  (apply + (vector->list (vector-map * v1 v2))))
 
 (define (scalar-mult s v)
-    (vector-map * v (build-vector (vector-length v) (λ (x) s))))
+  (vector-map * 
+              v 
+              (build-vector (vector-length v) (λ (x) s))))
+
+(define (vector-add v1 v2)
+  (vector-map +
+              v1
+              v2))
 
 (define (hexstr->number str)
-    (string->number (string-append "#x" str)))
+  (string->number (string-append "#x" str)))
 
 ;reading the image data files
 (define (img->vector filename)
-    (define filelist (with-input-from-file (string->path filename)
-                       (λ ()
-                         (define (iter file-list line)
-                           (if (eof-object? line)
-                               file-list
-                               (iter (append file-list (list line)) (read-line))))
-                         (iter '() (read-line)))))
-    (list->vector (map hexstr->number filelist)))
+  (define filelist (with-input-from-file (string->path filename)
+                     (λ ()
+                       (define (iter file-list line)
+                         (if (eof-object? line)
+                             file-list
+                             (iter (append file-list (list line)) (read-line))))
+                       (iter '() (read-line)))))
+  (list->vector (map hexstr->number filelist)))
 
 (define (filename->label name)
-    (if (regexp-match? #rx"[0-9]+\\.\\1\\.img$" name)
-        1
-        -1))
+  (if (regexp-match? #rx"[0-9]+\\.\\1\\.img$" name)
+      1
+      -1))
 
 ;our perceptron stuff
 (define (perceptron-label img)
-    (sign (dot sigma img)))
+  (sign (dot sigma img)))
 
 (define (train-perceptron img-name)
-    (define label (filename->label img-name))
-    (define vec (img->vector img-name))
-    (cond ((= (perceptron-label vec) label)
-           (display "good!\n"))
-          (else 
-           (set! sigma (vector-map + sigma (scalar-mult y vec)))
-           (display "bad! updated sigma, though.\n"))))
+  (define label (filename->label img-name))
+  (define vec (img->vector img-name))
+  (cond ((= (perceptron-label vec) label)
+         (display "good!\n")) 
+        (else 
+         (set! sigma (vector-add sigma (scalar-mult label vec)))
+         (display "bad! updated sigma, though.\n"))))
 
 ;how to train your perceptron...
 (define (train)
@@ -71,9 +78,9 @@
       (train-perceptron (path->string path)))))
 
 ;let's see what it thinks before training
-(perceptron (img->vector "images/sample/test1.img"))
-(perceptron (img->vector "images/sample/test2.img"))
-(perceptron (img->vector "images/sample/test3.img"))
+(perceptron-label (img->vector "images/sample/test1.img"))
+(perceptron-label (img->vector "images/sample/test2.img"))
+(perceptron-label (img->vector "images/sample/test3.img"))
 
 ;I ran some tests and realized it gets a tad bit better if you train it on
 ;the same data several times.  There's one image it just can't get right.
@@ -81,8 +88,8 @@
 ;this
 (map (λ (x) (train)) (build-list 10 values))
 
-(perceptron (img->vector "images/sample/test1.img"))
-(perceptron (img->vector "images/sample/test2.img"))
-(perceptron (img->vector "images/sample/test3.img"))
+(perceptron-label (img->vector "images/sample/test1.img"))
+(perceptron-label (img->vector "images/sample/test2.img"))
+(perceptron-label (img->vector "images/sample/test3.img"))
 
 ;that really wasn't great.  it has a false postive.  oh well!  
