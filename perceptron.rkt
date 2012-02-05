@@ -8,7 +8,7 @@
 ; Attempt at implementing a perceptron algorithm as per:
 ; Tommi Jaakkola, course materials for 6.867 Machine Learning, Fall 2006. 
 ; MIT OpenCourseWare (http://ocw.mit.edu/), Massachusetts Institute of Technology. 
-; Downloaded on [3 Feb 2012].
+; Downloaded on 3 Feb 2012.
 ;
 ; The training data is a bunch of 25x25 black/white images.  The perceptron is to
 ; identify which images are of a letter A and which ones are not.  I created the 
