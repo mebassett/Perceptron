@@ -59,13 +59,13 @@
       -1))
 
 ;our perceptron stuff
-(define (perceptron-label img)
+(define (linear-classifier img)
   (sign (dot sigma img)))
 
 (define (train-perceptron img-name)
   (define label (filename->label img-name))
   (define vec (img->vector img-name))
-  (cond ((= (perceptron-label vec) label)
+  (cond ((= (linear-classifier vec) label)
          (display "good!\n")) 
         (else 
          (set! sigma (vector-add sigma (scalar-mult label vec)))
@@ -78,9 +78,9 @@
       (train-perceptron (path->string path)))))
 
 ;let's see what it thinks before training
-(perceptron-label (img->vector "images/sample/test1.img"))
-(perceptron-label (img->vector "images/sample/test2.img"))
-(perceptron-label (img->vector "images/sample/test3.img"))
+(linear-classifier (img->vector "images/sample/test1.img"))
+(linear-classifier (img->vector "images/sample/test2.img"))
+(linear-classifier (img->vector "images/sample/test3.img"))
 
 ;I ran some tests and realized it gets a tad bit better if you train it on
 ;the same data several times.  There's one image it just can't get right.
@@ -88,8 +88,8 @@
 ;this
 (map (λ (x) (train)) (build-list 10 values))
 
-(perceptron-label (img->vector "images/sample/test1.img"))
-(perceptron-label (img->vector "images/sample/test2.img"))
-(perceptron-label (img->vector "images/sample/test3.img"))
+(linear-classifier (img->vector "images/sample/test1.img"))
+(linear-classifier (img->vector "images/sample/test2.img"))
+(linear-classifier (img->vector "images/sample/test3.img"))
 
 ;that really wasn't great.  it has a false postive.  oh well!  
